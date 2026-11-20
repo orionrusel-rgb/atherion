@@ -1,0 +1,486 @@
+:root {
+            --font-heading: 'Space Grotesk', 'Montserrat', sans-serif;
+            --font-display: 'Montserrat', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: var(--font-body);
+            background: #140b26;
+            color: #ffffff;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Exact Video Blurred Aurora Backdrop (Framed Presentation Mode) */
+        .ambient-stage {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 52% 28% at calc(50% + var(--mouse-x, 0) * 12%) calc(92% + var(--mouse-y, 0) * 8%), rgba(168, 232, 255, 0.92) 0%, rgba(110, 165, 240, 0.48) 45%, transparent 75%),
+                radial-gradient(circle at calc(92% - var(--mouse-x, 0) * 10%) calc(38% + var(--mouse-y, 0) * 10%), rgba(246, 162, 134, 0.78) 0%, rgba(212, 122, 152, 0.38) 36%, transparent 66%),
+                radial-gradient(circle at calc(8% + var(--mouse-x, 0) * 10%) calc(36% - var(--mouse-y, 0) * 10%), rgba(188, 128, 198, 0.75) 0%, transparent 62%),
+                radial-gradient(ellipse 80% 35% at calc(50% - var(--mouse-x, 0) * 8%) 8%, rgba(218, 168, 224, 0.8) 0%, transparent 65%),
+                linear-gradient(180deg, #c396ca 0%, #9b6fa6 32%, #483268 68%, #6382b8 100%);
+            pointer-events: none;
+            transition: background 0.15s ease-out;
+        }
+
+        /* Outer Stage Wrapper */
+        #stage-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: padding 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        #stage-wrapper.framed-mode {
+            padding: clamp(0px, 4.8vh, 48px) clamp(0px, 6.8vw, 105px);
+        }
+
+        #stage-wrapper.fullscreen-mode {
+            padding: 0;
+        }
+
+        @media (max-width: 768px) {
+            #stage-wrapper.framed-mode {
+                padding: 0;
+            }
+        }
+
+        /* Camera Viewport Window */
+        #camera-viewport {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1380px;
+            max-height: 860px;
+            aspect-ratio: 1440 / 900;
+            background: #140b29;
+            overflow: hidden;
+            border-radius: 18px;
+            box-shadow:
+                0 42px 100px -12px rgba(5, 2, 15, 0.92),
+                0 0 0 1px rgba(255, 255, 255, 0.16);
+            transition: max-width 0.55s ease, max-height 0.55s ease, border-radius 0.55s ease;
+        }
+
+        #stage-wrapper.fullscreen-mode #camera-viewport {
+            max-width: 100%;
+            max-height: 100%;
+            aspect-ratio: auto;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        @media (max-width: 768px) {
+            #camera-viewport {
+                max-width: 100%;
+                max-height: 100%;
+                aspect-ratio: auto;
+                border-radius: 0;
+                box-shadow: none;
+            }
+        }
+
+        /* =====================================================================
+           ANIMATED MORPHING LONG OVAL TRANSPARENT NAVBAR ON SCROLL
+           ===================================================================== */
+        #top-navbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 45;
+            display: flex;
+            justify-content: center;
+            padding: 16px 28px 0 28px;
+            pointer-events: none;
+            transition: padding 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #navbar-shell {
+            pointer-events: auto;
+            width: 100%;
+            max-width: 1320px;
+            height: 66px;
+            padding: 0 24px;
+            border-radius: 9999px;
+            background: rgba(20, 11, 41, 0.0);
+            border: 1px solid rgba(255, 255, 255, 0.0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition:
+                max-width 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                height 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                padding 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.55s ease,
+                border-color 0.55s ease,
+                box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                backdrop-filter 0.55s ease,
+                transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: visible;
+        }
+
+        /* Scrolled State: Morphs into a sleek, long transparent oval capsule with glowing rim */
+        #top-navbar.navbar-scrolled {
+            padding: 12px 16px 0 16px;
+        }
+
+        #top-navbar.navbar-scrolled #navbar-shell {
+            max-width: 890px;
+            height: 52px;
+            padding: 0 18px 0 22px;
+            border-radius: 9999px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.11) 0%, rgba(132, 210, 255, 0.06) 50%, rgba(22, 12, 48, 0.38) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            backdrop-filter: blur(18px) saturate(165%);
+            -webkit-backdrop-filter: blur(18px) saturate(165%);
+            box-shadow:
+                0 16px 42px -8px rgba(5, 2, 18, 0.72),
+                0 0 24px -4px rgba(124, 212, 255, 0.24),
+                inset 0 1px 1px rgba(255, 255, 255, 0.35);
+            transform: translateY(2px) scale(0.99);
+        }
+
+        /* Subtle animated light sheen sweeping across the oval navbar when scrolled */
+        #navbar-shell::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 9999px;
+            padding: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(158, 232, 255, 0.65) 50%, transparent 100%);
+            background-size: 200% 100%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            animation: ovalBorderSweep 5s linear infinite;
+        }
+
+        #top-navbar.navbar-scrolled #navbar-shell::before {
+            opacity: 1;
+        }
+
+        @keyframes ovalBorderSweep {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Nav Link Pill Buttons inside Oval Navbar */
+        .nav-pill-btn {
+            position: relative;
+            padding: 6px 13px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            color: rgba(255, 255, 255, 0.82);
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .nav-pill-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .nav-pill-btn:active {
+            transform: translateY(0px) scale(0.96);
+        }
+
+        .nav-pill-btn.active-nav-pill {
+            color: #ffffff;
+            background: linear-gradient(135deg, rgba(158, 229, 255, 0.25), rgba(168, 85, 247, 0.28));
+            box-shadow: 0 0 16px rgba(158, 229, 255, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+        }
+
+        /* Animated Action Button with Shimmer & Ripple */
+        .btn-animated-glow {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .btn-animated-glow::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 45%;
+            height: 200%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.38), transparent);
+            transform: rotate(25deg);
+            transition: left 0.65s ease;
+            pointer-events: none;
+        }
+
+        .btn-animated-glow:hover::after {
+            left: 130%;
+        }
+
+        .btn-animated-glow:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 12px 28px -6px rgba(124, 212, 255, 0.55);
+        }
+
+        .btn-animated-glow:active {
+            transform: translateY(0px) scale(0.96);
+        }
+
+        /* Tactile Click Ripple Animation for All Buttons */
+        .btn-click-ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.75) 0%, rgba(158, 229, 255, 0.35) 60%, transparent 100%);
+            pointer-events: none;
+            animation: btnRippleExpand 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes btnRippleExpand {
+            to {
+                transform: scale(3.8);
+                opacity: 0;
+            }
+        }
+
+        /* Creative Glassmorphic Telemetry Cards for Scenes 2, 3, 4 & 5 with Interactive Mouse Spotlight */
+        .cyber-glass-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(22, 12, 46, 0.82) 0%, rgba(35, 19, 68, 0.66) 100%);
+            backdrop-filter: blur(18px) saturate(160%);
+            -webkit-backdrop-filter: blur(18px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow:
+                0 24px 60px -12px rgba(6, 2, 18, 0.82),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .cyber-glass-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                380px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+                rgba(158, 232, 255, 0.16),
+                transparent 60%
+            );
+            opacity: 0;
+            transition: opacity 0.35s ease;
+            pointer-events: none;
+        }
+
+        .cyber-glass-card:hover::before {
+            opacity: 1;
+        }
+
+        .cyber-glass-card:hover {
+            border-color: rgba(158, 229, 255, 0.42);
+            box-shadow:
+                0 28px 68px -12px rgba(6, 2, 18, 0.92),
+                0 0 32px -6px rgba(124, 212, 255, 0.26),
+                inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        }
+
+        /* Enhanced Mobile & Tablet Responsive Overrides */
+        @media (max-width: 1024px) {
+            #top-navbar.navbar-scrolled #navbar-shell {
+                max-width: 94%;
+                height: 48px;
+                padding: 0 14px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            #top-navbar {
+                padding: 10px 12px 0 12px;
+            }
+            #top-navbar.navbar-scrolled {
+                padding: 8px 10px 0 10px;
+            }
+            #navbar-shell {
+                height: 50px;
+                padding: 0 14px;
+            }
+            .cyber-glass-card {
+                border-radius: 16px;
+                background: linear-gradient(145deg, rgba(18, 9, 38, 0.88) 0%, rgba(28, 15, 56, 0.78) 100%);
+            }
+        }
+
+        /* Native Scroll Proxy */
+        #scroll-proxy {
+            position: absolute;
+            inset: 0;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            z-index: 35;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        #scroll-proxy::-webkit-scrollbar {
+            display: none;
+        }
+
+        #scroll-spacer {
+            width: 100%;
+            height: 500%;
+            pointer-events: none;
+        }
+
+        #continuous-world {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 500%;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            pointer-events: none;
+        }
+
+        .world-interactive {
+            pointer-events: auto;
+        }
+
+        /* Typography matching video reference & futuristic clean-tech aesthetic */
+        .segesta-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            letter-spacing: 0.32em;
+            text-indent: 0.32em;
+            text-shadow: 0 8px 34px rgba(48, 18, 74, 0.6);
+        }
+
+        .segesta-subtitle {
+            font-family: var(--font-heading);
+            font-weight: 500;
+            letter-spacing: 0.48em;
+            text-indent: 0.48em;
+            text-shadow: 0 2px 14px rgba(48, 18, 74, 0.75);
+        }
+
+        .section-heading {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            text-shadow: 0 4px 24px rgba(8, 4, 24, 0.85);
+        }
+
+        .sub-heading {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+
+        .body-copy {
+            font-family: var(--font-body);
+            font-weight: 300;
+            line-height: 1.64;
+            color: rgba(240, 238, 255, 0.88);
+        }
+
+        /* Rotating Hydro Turbine Wheel in Scene 3 */
+        @keyframes spinTurbine {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+        .hydro-wheel-spin {
+            transform-origin: 368px 2285px;
+            animation: spinTurbine 20s linear infinite;
+            transition: animation-duration 0.6s ease;
+        }
+        .hydro-wheel-spin.overdrive-spin {
+            animation-duration: 4.5s;
+        }
+
+        /* Subtle Hologram Pulse */
+        @keyframes holoPulse {
+            0%, 100% { opacity: 0.78; }
+            50% { opacity: 0.98; }
+        }
+        .holo-screen {
+            animation: holoPulse 3.2s ease-in-out infinite;
+        }
+
+        /* Floating Golden Orbs */
+        @keyframes floatOrb {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .floating-orb {
+            animation: floatOrb 4.8s ease-in-out infinite;
+        }
+
+        /* Animated Waterfall Ribbon Shimmer */
+        @keyframes ribbonPulse {
+            0%, 100% { opacity: 0.72; }
+            50% { opacity: 0.95; }
+        }
+        .wf-ribbon-pulse {
+            animation: ribbonPulse 2.6s ease-in-out infinite;
+        }
+
+        /* Custom Range Scrubber Styling */
+        input[type=range].timeline-scrubber {
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.18);
+            height: 4px;
+            border-radius: 999px;
+            outline: none;
+        }
+        input[type=range].timeline-scrubber::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 0 10px rgba(168, 232, 255, 0.95);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        input[type=range].timeline-scrubber::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+
+        @media (max-width: 640px) {
+            .segesta-title {
+                letter-spacing: 0.22em;
+                text-indent: 0.22em;
+            }
+            .segesta-subtitle {
+                letter-spacing: 0.32em;
+                text-indent: 0.32em;
+            }
+        }

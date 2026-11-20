@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATHERION // Subsurface Hydro-Thermal Energy</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Space Grotesk, Montserrat & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Blurred Video Aurora Backdrop + Interactive Mouse-Reactive Background Canvas -->
+    <div class="ambient-stage">
+        <canvas id="ambient-bg-canvas" class="w-full h-full opacity-80"></canvas>
+    </div>
+
+    <!-- Live Interactive Toast Notification Banner (Bottom Left) -->
+    <div id="live-action-toast" class="fixed bottom-14 sm:bottom-4 left-3 sm:left-4 z-50 pointer-events-none opacity-0 translate-y-3 transition-all duration-300 flex items-center gap-2.5 bg-[#160c30]/95 backdrop-blur-xl border border-cyan-400/45 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.65)] text-[11px] sm:text-xs text-cyan-100 max-w-[90vw]">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
+        <span id="toast-message" class="truncate">Telemetry Synchronized</span>
+    </div>
+
+    <!-- ================= MAIN PRESENTATION STAGE ================= -->
+    <div id="stage-wrapper" class="fullscreen-mode">
+
+        <!-- Camera Viewport Window -->
+        <div id="camera-viewport">
+
+            <!-- =================================================================
+                 MORPHING OVAL TRANSPARENT NAVBAR (Transforms into Long Glass Pill on Scroll)
+                 ================================================================= -->
+            <header id="top-navbar">
+                <nav id="navbar-shell" aria-label="Primary Navigation">
+                    <!-- Left Navigation Pill Links -->
+                    <div class="hidden md:flex items-center gap-1 lg:gap-1.5">
+                        <button onclick="jumpToScene(0)" data-nav-scene="0" class="nav-pill-btn active-nav-pill">01. Surface</button>
+                        <button onclick="jumpToScene(1)" data-nav-scene="1" class="nav-pill-btn">02. Hydro Lab</button>
+                        <button onclick="jumpToScene(2)" data-nav-scene="2" class="nav-pill-btn">03. Kinetic Core</button>
+                    </div>
+
+                    <!-- Mobile Menu Trigger -->
+                    <button onclick="toggleMobileNav()" class="md:hidden p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all" aria-label="Toggle Menu">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+
+                    <!-- Center Animated Delta-Core Emblem (Click whip-scrolls back to Surface) -->
+                    <button onclick="jumpToScene(0); triggerToast('Ascending to Surface Horizon (0m)...');" aria-label="Aetheria Home" class="group flex items-center gap-2.5 px-3 py-1.5 rounded-full hover:bg-white/10 transition-all duration-300 focus:outline-none">
+                        <div class="relative flex items-center justify-center">
+                            <span class="absolute w-6 h-6 rounded-full bg-cyan-400/30 scale-0 group-hover:scale-125 transition-transform duration-500"></span>
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white transform group-hover:rotate-180 transition-transform duration-500 drop-shadow-[0_0_10px_rgba(165,243,252,0.9)]" viewBox="0 0 24 22" fill="currentColor">
+                                <polygon points="12,1 23,21 1,21" />
+                            </svg>
+                        </div>
+                        <span id="navbar-brand-label" class="font-['Space_Grotesk'] font-bold text-xs tracking-[0.25em] text-white/95 hidden sm:inline">
+                            ATHERION
+                        </span>
+                    </button>
+
+                    <!-- Right Navigation Pill Links & Action Buttons -->
+                    <div class="flex items-center gap-1 lg:gap-1.5">
+                        <button onclick="jumpToScene(3)" data-nav-scene="3" class="nav-pill-btn hidden md:inline-block">04. Geo-Plasma</button>
+                        <button onclick="jumpToScene(4)" data-nav-scene="4" class="nav-pill-btn hidden md:inline-block">05. Biosphere</button>
+                        <button onclick="openSpecsModal()" class="nav-pill-btn hidden lg:inline-flex items-center gap-1 text-cyan-200">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Live Grid
+                        </button>
+                        <button onclick="openModal('Connect With Aetheria Grid')" class="btn-animated-glow ml-1 px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-400/25 via-purple-500/30 to-fuchsia-500/30 border border-white/45 hover:border-cyan-200 text-white text-[10.5px] sm:text-[11px] font-semibold tracking-wider shadow-lg">
+                            Sync Portal
+                        </button>
+                    </div>
+                </nav>
+
+                <!-- Mobile Glass Capsule Dropdown -->
+                <div id="mobile-nav-drawer" class="hidden md:hidden pointer-events-auto absolute top-16 left-4 right-4 bg-[#160c30]/90 backdrop-blur-2xl border border-white/25 rounded-3xl p-4 space-y-2 text-xs shadow-2xl">
+                    <div class="flex items-center justify-between px-2 pb-2 border-b border-white/10 text-[10px] font-mono text-cyan-300">
+                        <span>VERTICAL DEPTH NAVIGATION</span>
+                        <span>GRID: 99.98% ONLINE</span>
+                    </div>
+                    <button onclick="jumpToScene(0); toggleMobileNav();" class="block w-full text-left px-3 py-2 rounded-full hover:bg-white/10 text-white/90">01 // Surface Horizon (0m)</button>
+                    <button onclick="jumpToScene(1); toggleMobileNav();" class="block w-full text-left px-3 py-2 rounded-full hover:bg-white/10 text-white/90">02 // Subsurface Hydro Lab (-320m)</button>
+                    <button onclick="jumpToScene(2); toggleMobileNav();" class="block w-full text-left px-3 py-2 rounded-full hover:bg-white/10 text-white/90">03 // Kinetic Turbine Core (-780m)</button>
+                    <button onclick="jumpToScene(3); toggleMobileNav();" class="block w-full text-left px-3 py-2 rounded-full hover:bg-white/10 text-white/90">04 // Geothermal Plasma Reactor (-1,450m)</button>
+                    <button onclick="jumpToScene(4); toggleMobileNav();" class="block w-full text-left px-3 py-2 rounded-full hover:bg-white/10 text-white/90">05 // Restored Biosphere Horizon</button>
+                    <button onclick="openSpecsModal(); toggleMobileNav();" class="block w-full text-center mt-2 py-2 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 font-semibold">Open Live System Telemetry</button>
+                </div>
+            </header>
+
+            <!-- INVISIBLE NATIVE SCROLL/TOUCH PROXY -->
+            <div id="scroll-proxy">
+                <div id="scroll-spacer"></div>
+            </div>
+
+            <!-- =================================================================================
+                 THE UNIFIED 5-SCENE CONTINUOUS VERTICAL WORLD (1440 x 4500 Coordinate Space)
+                 ================================================================================= -->
+            <div id="continuous-world">
+
+                <!-- 1. BACKDROP SVG LAYER (Scene 1 Sunset Sky & Far Mountains — Behind Title) -->
+                <svg class="absolute inset-0 w-full h-full z-0" viewBox="0 0 1440 4500" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="s1Sky" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#583f7a" />
+                            <stop offset="28%" stop-color="#845a8c" />
+                            <stop offset="56%" stop-color="#c47c8a" />
+                            <stop offset="80%" stop-color="#f2aa79" />
+                            <stop offset="100%" stop-color="#ffe09e" />
+                        </linearGradient>
+                        <linearGradient id="mtnSunLeft" x1="10%" y1="0%" x2="90%" y2="100%">
+                            <stop offset="0%" stop-color="#ffc488" />
+                            <stop offset="48%" stop-color="#d47f8e" />
+                            <stop offset="100%" stop-color="#6e4278" />
+                        </linearGradient>
+                        <linearGradient id="mtnShadeLeft" x1="0%" y1="0%" x2="20%" y2="100%">
+                            <stop offset="0%" stop-color="#966196" />
+                            <stop offset="65%" stop-color="#643e78" />
+                            <stop offset="100%" stop-color="#3f2559" />
+                        </linearGradient>
+                        <linearGradient id="mtnSunRight" x1="0%" y1="0%" x2="85%" y2="100%">
+                            <stop offset="0%" stop-color="#ffca8a" />
+                            <stop offset="50%" stop-color="#c47392" />
+                            <stop offset="100%" stop-color="#683e78" />
+                        </linearGradient>
+                        <linearGradient id="beamGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98" />
+                            <stop offset="65%" stop-color="#ffe79e" stop-opacity="0.9" />
+                            <stop offset="100%" stop-color="#f5a26f" stop-opacity="0.25" />
+                        </linearGradient>
+                    </defs>
+
+                    <rect x="0" y="0" width="1440" height="4500" fill="#130b29" />
+                    <rect x="0" y="0" width="1440" height="760" fill="url(#s1Sky)" />
+                    <ellipse cx="720" cy="490" rx="480" ry="240" fill="#ffe7a8" opacity="0.35" />
+
+                    <path d="M55,342 Q145,295 235,330 Q325,288 425,338 Z" fill="#f7be97" opacity="0.55" />
+                    <path d="M1010,275 Q1115,235 1210,268 Q1295,242 1385,280 Z" fill="#f7be97" opacity="0.5" />
+
+                    <g id="parallax-far-mountains">
+                        <polygon points="85,485 302,218 395,485" fill="url(#mtnShadeLeft)" />
+                        <polygon points="302,218 395,485 475,385" fill="url(#mtnSunLeft)" />
+                        <polygon points="245,510 482,146 565,510" fill="url(#mtnShadeLeft)" />
+                        <polygon points="482,146 565,510 695,400" fill="url(#mtnSunLeft)" />
+                        <polygon points="482,146 520,288 608,268" fill="#ffd89c" opacity="0.82" />
+                        <polygon points="348,485 482,146 432,485" fill="#593770" opacity="0.85" />
+
+                        <polygon points="710,485 952,150 1035,485" fill="#7c518b" />
+                        <polygon points="952,150 1035,485 1275,395" fill="url(#mtnSunRight)" />
+                        <polygon points="952,150 995,278 1092,262" fill="#ffe3a8" opacity="0.74" />
+                        <polygon points="865,475 1072,248 1225,475" fill="#633d78" />
+                        <polygon points="1072,248 1225,475 1355,415" fill="url(#mtnSunRight)" />
+
+                        <g id="mtn-light-beam">
+                            <rect id="beam-glow-rect" x="932" y="232" width="44" height="215" fill="url(#beamGlow)" opacity="0.28" />
+                            <path id="beam-line-1" d="M940,232 L940,432 L978,432" stroke="#fff9d6" stroke-width="5" fill="none" stroke-dasharray="260" stroke-dashoffset="0" opacity="0.92" />
+                            <path id="beam-line-2" d="M962,272 L962,418 L992,418" stroke="#ffe596" stroke-width="3.5" fill="none" stroke-dasharray="200" stroke-dashoffset="0" opacity="0.82" />
+                        </g>
+                    </g>
+                </svg>
+
+                <!-- 2. MID-BACK LAYER: "AETHERIA — SUBSURFACE CLEAN ENERGY" HERO TITLE (z-10)
+                     Sinks directly BEHIND the z-20 central dark purple mountain peak and city buildings on scroll! -->
+                <div id="parallax-hero-title" class="absolute inset-x-0 top-[4.6%] z-10 flex flex-col items-center text-center pointer-events-none px-4">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-[9px] sm:text-[10px] font-mono tracking-[0.25em] uppercase text-amber-100 mb-2.5 shadow-lg">
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-300 animate-ping"></span>
+                        ZERO-CARBON DEEP EARTH ARCHITECTURE
+                    </div>
+                    <h1 class="segesta-title text-3xl sm:text-5xl md:text-6xl lg:text-[66px] text-white leading-none">
+                        ATHERION
+                    </h1>
+                    <p class="segesta-subtitle mt-2.5 sm:mt-3.5 text-[8px] sm:text-[11px] lg:text-[12.5px] text-white/95">
+                        HYDRO-THERMAL CORE SOLUTIONS
+                    </p>
+                </div>
+
+                <!-- 3. MAIN CONTINUOUS WORLD VECTOR ARCHITECTURE (z-20)
+                     Covers all 5 scenes seamlessly from y=0 to y=4500 -->
+                <svg class="absolute inset-0 w-full h-full z-20 pointer-events-none" viewBox="0 0 1440 4500" preserveAspectRatio="none">
+                    <defs>
+                        <!-- City & Canyon Gradients -->
+                        <linearGradient id="bldgShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#41295c" />
+                            <stop offset="55%" stop-color="#2a1842" />
+                            <stop offset="100%" stop-color="#170c29" />
+                        </linearGradient>
+                        <linearGradient id="bldgSunlit" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ffca8b" />
+                            <stop offset="38%" stop-color="#c47182" />
+                            <stop offset="75%" stop-color="#613769" />
+                            <stop offset="100%" stop-color="#2a1742" />
+                        </linearGradient>
+                        <linearGradient id="bldgGoldRim" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ffeab0" />
+                            <stop offset="50%" stop-color="#e3926b" />
+                            <stop offset="100%" stop-color="#492a5e" />
+                        </linearGradient>
+                        <linearGradient id="streetLampCone" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#fff8c9" stop-opacity="0.95" />
+                            <stop offset="55%" stop-color="#ffd47e" stop-opacity="0.48" />
+                            <stop offset="100%" stop-color="#f7b267" stop-opacity="0" />
+                        </linearGradient>
+                        <linearGradient id="riverCyan" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#5cb4f0" />
+                            <stop offset="45%" stop-color="#7cd2ff" />
+                            <stop offset="82%" stop-color="#b8f0ff" />
+                            <stop offset="100%" stop-color="#e8fbff" />
+                        </linearGradient>
+                        <linearGradient id="rockBankGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#b86d98" />
+                            <stop offset="45%" stop-color="#693975" />
+                            <stop offset="100%" stop-color="#190d2e" />
+                        </linearGradient>
+
+                        <!-- Waterfall Translucent Curtain Gradients (Matches Video's Stylized Vector Ribbons) -->
+                        <linearGradient id="wfCurtainOuter" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#7cc9ff" stop-opacity="0.55" />
+                            <stop offset="25%" stop-color="#4d68c4" stop-opacity="0.38" />
+                            <stop offset="75%" stop-color="#3c4ca8" stop-opacity="0.32" />
+                            <stop offset="100%" stop-color="#85d6ff" stop-opacity="0.55" />
+                        </linearGradient>
+                        <linearGradient id="wfCurtainCore" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.92" />
+                            <stop offset="18%" stop-color="#9ee5ff" stop-opacity="0.68" />
+                            <stop offset="55%" stop-color="#6894eb" stop-opacity="0.5" />
+                            <stop offset="88%" stop-color="#8cd8ff" stop-opacity="0.65" />
+                            <stop offset="100%" stop-color="#e3f8ff" stop-opacity="0.85" />
+                        </linearGradient>
+
+                        <!-- Scene 2 3-Story Glass Lab Gradients -->
+                        <linearGradient id="labInterior" x1="5%" y1="0%" x2="95%" y2="100%">
+                            <stop offset="0%" stop-color="#251a52" stop-opacity="0.92" />
+                            <stop offset="35%" stop-color="#632e6e" stop-opacity="0.94" />
+                            <stop offset="70%" stop-color="#d9653b" stop-opacity="0.96" />
+                            <stop offset="100%" stop-color="#ffc24f" stop-opacity="0.98" />
+                        </linearGradient>
+                        <radialGradient id="goldenSphere" cx="35%" cy="35%" r="65%">
+                            <stop offset="0%" stop-color="#fff9db" stop-opacity="0.96" />
+                            <stop offset="40%" stop-color="#ffae3d" stop-opacity="0.82" />
+                            <stop offset="75%" stop-color="#d94e34" stop-opacity="0.45" />
+                            <stop offset="100%" stop-color="#6e2352" stop-opacity="0" />
+                        </radialGradient>
+                        <linearGradient id="neonFloorPink" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#160b2e" />
+                            <stop offset="28%" stop-color="#cf2982" />
+                            <stop offset="58%" stop-color="#70226e" />
+                            <stop offset="100%" stop-color="#160b2e" />
+                        </linearGradient>
+
+                        <!-- Scene 3 Hydro Turbine Gradients -->
+                        <linearGradient id="turbineMetal" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#786ab0" />
+                            <stop offset="50%" stop-color="#3c2e6b" />
+                            <stop offset="100%" stop-color="#1a1136" />
+                        </linearGradient>
+                        <linearGradient id="turbineCrimsonGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#1e0e36" />
+                            <stop offset="50%" stop-color="#c41d68" />
+                            <stop offset="100%" stop-color="#24103c" />
+                        </linearGradient>
+
+                        <!-- Scene 4 Plasma Column Gradients -->
+                        <linearGradient id="plasmaBeam" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ff9436" stop-opacity="0.2" />
+                            <stop offset="35%" stop-color="#ff6224" stop-opacity="0.82" />
+                            <stop offset="78%" stop-color="#ffd059" stop-opacity="0.96" />
+                            <stop offset="100%" stop-color="#ffffff" stop-opacity="1" />
+                        </linearGradient>
+
+                        <!-- Scene 5 Sunset Cavern Gradients -->
+                        <linearGradient id="s5SunsetSky" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#7c4f82" />
+                            <stop offset="36%" stop-color="#c4787e" />
+                            <stop offset="70%" stop-color="#f7b269" />
+                            <stop offset="100%" stop-color="#ffea9f" />
+                        </linearGradient>
+                        <linearGradient id="s5Ocean" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#edb982" />
+                            <stop offset="22%" stop-color="#7fa6c7" />
+                            <stop offset="62%" stop-color="#3c5891" />
+                            <stop offset="100%" stop-color="#1c2454" />
+                        </linearGradient>
+                        <linearGradient id="s5IslandWarm" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ffd28f" />
+                            <stop offset="48%" stop-color="#d66b8a" />
+                            <stop offset="100%" stop-color="#6b326e" />
+                        </linearGradient>
+                        <linearGradient id="s5IslandCool" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#914c8a" />
+                            <stop offset="100%" stop-color="#3b1c52" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- =================================================================
+                         SCENE 1 FOREGROUND: CENTRAL MOUNTAIN, CANYON WATERFALL, CITY & RIVER
+                         (y = 330..920) — Covers "SEGESTA" on scroll like frame 00:12.0!
+                         ================================================================= -->
+                    <!-- Mid-Ground Creamy Cloud Bank & Central Mountain (Follows scroll with layered depth) -->
+                    <g id="parallax-mid-mountain">
+                        <path d="M185,455 Q295,365 415,408 Q515,342 625,412 Q735,365 845,408 Q955,332 1085,395 Q1185,358 1265,455 L1265,640 L185,640 Z" fill="#f7be94" opacity="0.94" />
+                        <path d="M145,485 Q275,405 405,442 Q535,395 655,452 Q815,400 945,442 Q1090,385 1275,480 L1275,650 L145,650 Z" fill="#d18394" opacity="0.9" />
+
+                        <!-- Central Darker Purple Mountain Peak (Specifically occludes "G E S" at frame 00:12.0!) -->
+                        <polygon points="410,650 566,358 655,650" fill="#462b63" />
+                        <polygon points="566,358 692,445 745,650 635,650" fill="#7c4f8a" />
+                        <polygon points="700,650 838,395 960,650" fill="#553670" />
+                        <!-- Curved White-Cyan Canyon Waterfall on Central Mountain -->
+                        <path d="M568,366 Q604,445 596,640 L624,640 Q628,445 590,366 Z" fill="#cdf4ff" opacity="0.95" />
+                        <!-- Distant Center Cascade feeding River -->
+                        <rect x="712" y="535" width="16" height="115" fill="#cdf4ff" />
+                    </g>
+
+                    <!-- Left City Skyline (1-Point Perspective) -->
+                    <g>
+                        <polygon points="-10,265 108,308 108,735 -10,735" fill="url(#bldgShadow)" />
+                        <polygon points="108,308 146,308 146,735 108,735" fill="url(#bldgGoldRim)" />
+                        <g fill="#f7b267" opacity="0.82">
+                            <rect x="8" y="325" width="84" height="6" /><rect x="8" y="346" width="84" height="6" />
+                            <rect x="8" y="367" width="84" height="6" /><rect x="8" y="388" width="84" height="6" />
+                            <rect x="8" y="409" width="84" height="6" /><rect x="8" y="430" width="84" height="6" />
+                            <rect x="8" y="451" width="84" height="6" /><rect x="8" y="472" width="84" height="6" />
+                            <rect x="8" y="493" width="84" height="6" /><rect x="8" y="514" width="84" height="6" />
+                            <rect x="8" y="535" width="84" height="6" /><rect x="8" y="556" width="84" height="6" />
+                            <rect x="8" y="577" width="84" height="6" /><rect x="8" y="598" width="84" height="6" />
+                        </g>
+                        <polygon points="138,355 240,408 240,715 138,715" fill="url(#bldgSunlit)" />
+                        <polygon points="240,408 270,415 270,715 240,715" fill="#2b1845" />
+                        <g fill="#231238" opacity="0.72">
+                            <rect x="150" y="415" width="9" height="285" /><rect x="170" y="415" width="9" height="285" />
+                            <rect x="190" y="415" width="9" height="285" /><rect x="210" y="415" width="9" height="285" />
+                        </g>
+                        <polygon points="266,422 370,475 370,690 266,690" fill="#472b63" />
+                        <polygon points="370,475 395,482 395,690 370,690" fill="url(#bldgGoldRim)" />
+                        <g fill="#f5a86c" opacity="0.62">
+                            <polygon points="278,452 358,490 358,502 278,464" />
+                            <polygon points="278,482 358,520 358,532 278,494" />
+                            <polygon points="278,512 358,550 358,562 278,524" />
+                            <polygon points="278,542 358,580 358,592 278,554" />
+                        </g>
+                        <polygon points="395,465 460,495 460,665 395,665" fill="url(#bldgSunlit)" />
+                        <polygon points="460,510 530,542 530,645 460,645" fill="#392154" />
+                        <polygon points="530,538 592,562 592,630 530,630" fill="#5c3978" />
+                    </g>
+
+                    <!-- Right City Skyline (1-Point Perspective) -->
+                    <g>
+                        <polygon points="1450,265 1232,350 1232,735 1450,735" fill="url(#bldgSunlit)" />
+                        <polygon points="1196,360 1232,350 1232,735 1196,735" fill="#291742" />
+                        <g fill="#221136" opacity="0.78">
+                            <polygon points="1248,365 1440,295 1440,310 1248,380" />
+                            <polygon points="1248,395 1440,325 1440,340 1248,410" />
+                            <polygon points="1248,425 1440,355 1440,370 1248,440" />
+                            <polygon points="1248,455 1440,385 1440,400 1248,470" />
+                            <polygon points="1248,485 1440,415 1440,430 1248,500" />
+                            <polygon points="1248,515 1440,445 1440,460 1248,530" />
+                            <polygon points="1248,545 1440,475 1440,490 1248,560" />
+                        </g>
+                        <polygon points="1052,410 1138,378 1138,700 1052,700" fill="url(#bldgGoldRim)" />
+                        <polygon points="1138,378 1195,398 1195,700 1138,700" fill="#24143b" />
+                        <polygon points="942,445 1018,418 1018,680 942,680" fill="#3e2459" />
+                        <polygon points="1018,418 1052,432 1052,680 1018,680" fill="#70457d" />
+                        <g fill="#f7b267" opacity="0.65">
+                            <rect x="954" y="455" width="50" height="5" /><rect x="954" y="475" width="50" height="5" />
+                            <rect x="954" y="495" width="50" height="5" /><rect x="954" y="515" width="50" height="5" />
+                            <rect x="954" y="535" width="50" height="5" /><rect x="954" y="555" width="50" height="5" />
+                        </g>
+                        <polygon points="862,505 942,475 942,655 862,655" fill="url(#bldgSunlit)" />
+                        <polygon points="792,545 862,518 862,635 792,635" fill="#3c2357" />
+                    </g>
+
+                    <!-- Perspective Riverbank Avenues & 8 Streetlamp Cones -->
+                    <polygon points="0,750 620,618 658,618 195,785" fill="#201136" />
+                    <polygon points="1440,750 820,618 782,618 1245,785" fill="#201136" />
+                    <g>
+                        <line x1="168" y1="555" x2="168" y2="715" stroke="#4a2e6b" stroke-width="3" />
+                        <polygon points="168,558 102,720 218,720" fill="url(#streetLampCone)" />
+                        <line x1="348" y1="578" x2="348" y2="695" stroke="#4a2e6b" stroke-width="2.5" />
+                        <polygon points="348,580 300,695 386,695" fill="url(#streetLampCone)" />
+                        <line x1="468" y1="594" x2="468" y2="672" stroke="#4a2e6b" stroke-width="2" />
+                        <polygon points="468,596 434,672 496,672" fill="url(#streetLampCone)" />
+                        <line x1="552" y1="605" x2="552" y2="655" stroke="#4a2e6b" stroke-width="1.5" />
+                        <polygon points="552,606 530,655 572,655" fill="url(#streetLampCone)" />
+
+                        <line x1="1272" y1="555" x2="1272" y2="715" stroke="#4a2e6b" stroke-width="3" />
+                        <polygon points="1272,558 1222,720 1338,720" fill="url(#streetLampCone)" />
+                        <line x1="1092" y1="578" x2="1092" y2="695" stroke="#4a2e6b" stroke-width="2.5" />
+                        <polygon points="1092,580 1054,695 1140,695" fill="url(#streetLampCone)" />
+                        <line x1="972" y1="594" x2="972" y2="672" stroke="#4a2e6b" stroke-width="2" />
+                        <polygon points="972,596 944,672 1006,672" fill="url(#streetLampCone)" />
+                        <line x1="888" y1="605" x2="888" y2="655" stroke="#4a2e6b" stroke-width="1.5" />
+                        <polygon points="888,606 868,655 910,655" fill="url(#streetLampCone)" />
+                    </g>
+
+                    <!-- =================================================================
+                         SEAMLESS TRANSITION 1 -> 2: CYAN RIVER BENDING OVER CLIFF EDGE
+                         INTO SCENE 2 GIANT CENTRAL WATERFALL (y = 615..1755)
+                         ================================================================= -->
+                    <!-- Upper Terraced River Channel (y = 615..835) -->
+                    <polygon points="694,615 746,615 965,835 475,835" fill="url(#riverCyan)" />
+                    <!-- 4 Horizontal White Foam Step Rapids -->
+                    <g fill="#ffffff" opacity="0.82">
+                        <rect x="682" y="638" width="76" height="5" rx="2" />
+                        <rect x="650" y="672" width="140" height="6" rx="3" />
+                        <rect x="605" y="715" width="230" height="8" rx="4" />
+                        <rect x="555" y="768" width="330" height="14" rx="5" />
+                    </g>
+                    <!-- Stepping Stones in Upper River -->
+                    <polygon points="680,664 704,656 714,668 674,670" fill="#6b3b78" />
+                    <polygon points="738,696 770,688 780,702 730,704" fill="#5e326d" />
+                    <polygon points="640,706 672,698 682,710 632,712" fill="#6b3b78" />
+
+                    <!-- Continuous Waterfall Vector Curtain Ribbons from y=795 to y=1755 (Scene 1 Lip -> Scene 2 Floor) -->
+                    <g id="waterfall-1-curtains">
+                        <!-- Deep Indigo-Blue Subterranean Water Shaft Backdrop -->
+                        <path d="M546,795 Q720,784 894,795 L880,1755 L560,1755 Z" fill="url(#wfCurtainOuter)" />
+                        <!-- Multi-Layered Translucent Vector Ribbons (Exact match to video's geometric waterfall style) -->
+                        <rect class="wf-ribbon-pulse" x="566" y="798" width="22" height="957" fill="url(#wfCurtainCore)" opacity="0.52" />
+                        <rect x="592" y="798" width="54" height="957" fill="url(#wfCurtainCore)" opacity="0.85" />
+                        <rect class="wf-ribbon-pulse" style="animation-delay:-0.8s" x="650" y="798" width="18" height="957" fill="#ffffff" opacity="0.45" />
+                        <rect x="674" y="798" width="88" height="957" fill="url(#wfCurtainCore)" opacity="0.92" />
+                        <rect class="wf-ribbon-pulse" style="animation-delay:-1.5s" x="768" y="798" width="24" height="957" fill="#a8ecff" opacity="0.6" />
+                        <rect x="796" y="798" width="60" height="957" fill="url(#wfCurtainCore)" opacity="0.8" />
+                        <rect x="860" y="798" width="16" height="957" fill="url(#wfCurtainCore)" opacity="0.48" />
+
+                        <!-- Fine Vertical Geometric Highlight Threads Inside Waterfall 1 -->
+                        <g stroke="#ffffff" stroke-opacity="0.55" stroke-width="1.5">
+                            <line x1="582" y1="810" x2="582" y2="1750" />
+                            <line x1="618" y1="805" x2="618" y2="1750" />
+                            <line x1="642" y1="820" x2="642" y2="1750" />
+                            <line x1="695" y1="802" x2="695" y2="1750" />
+                            <line x1="722" y1="800" x2="722" y2="1750" stroke-width="2.5" stroke-opacity="0.75" />
+                            <line x1="748" y1="808" x2="748" y2="1750" />
+                            <line x1="784" y1="815" x2="784" y2="1750" />
+                            <line x1="818" y1="806" x2="818" y2="1750" />
+                            <line x1="846" y1="818" x2="846" y2="1750" />
+                        </g>
+
+                        <!-- Stepped Over-the-Lip Crest Foam Bands (y = 792..905) -->
+                        <path d="M552,794 Q720,782 888,794 L876,848 Q720,836 564,848 Z" fill="#ffffff" opacity="0.82" />
+                        <path d="M564,848 Q720,836 876,848 L868,895 Q720,884 572,895 Z" fill="#bdf2ff" opacity="0.52" />
+                        <rect x="580" y="832" width="110" height="4" rx="2" fill="#ffffff" opacity="0.9" />
+                        <rect x="745" y="836" width="115" height="4" rx="2" fill="#ffffff" opacity="0.9" />
+                        <rect x="635" y="868" width="170" height="3.5" rx="1.5" fill="#e0faff" opacity="0.75" />
+                    </g>
+
+                    <!-- 3 Distinct Dark-Purple Stepping Rocks Sitting Right on the Waterfall Lip (Visible in 00:00, 00:01 & 00:12) -->
+                    <g id="waterfall-lip-boulders">
+                        <!-- Left Lip Boulder with Bright Pink-Lavender Top Facet -->
+                        <polygon points="558,768 614,748 636,778 548,782" fill="#633473" />
+                        <polygon points="558,768 614,748 602,772 554,774" fill="#b86d9c" />
+                        <!-- Center-Bottom Lip Boulder right at the vertical drop -->
+                        <polygon points="698,806 742,790 758,818 690,820" fill="#592d6b" />
+                        <polygon points="698,806 742,790 732,810 696,812" fill="#ad6494" />
+                        <!-- Right Lip Boulder -->
+                        <polygon points="806,768 858,748 880,776 798,780" fill="#592d6b" />
+                        <polygon points="806,768 858,748 846,770 802,772" fill="#b26898" />
+                    </g>
+
+                    <!-- Left & Right Sculpted Purple Rocky Riverbanks (y = 705..945 — Bridges Scene 1 & Top of Scene 2!) -->
+                    <polygon points="-10,760 145,722 290,742 415,705 552,742 572,915 440,940 -10,925" fill="url(#rockBankGrad)" />
+                    <polygon points="145,722 240,768 290,742" fill="#cf7ca0" opacity="0.7" />
+                    <polygon points="365,738 432,705 498,748 418,778" fill="#bd6d92" opacity="0.75" />
+                    <polygon points="-10,835 555,825 568,945 -10,965" fill="#130b29" />
+
+                    <polygon points="1450,760 1295,722 1150,742 1025,705 888,742 868,915 1000,940 1450,925" fill="url(#rockBankGrad)" />
+                    <polygon points="1295,722 1200,768 1150,742" fill="#cf7ca0" opacity="0.7" />
+                    <polygon points="1075,738 1008,705 942,748 1022,778" fill="#bd6d92" opacity="0.75" />
+                    <polygon points="1450,835 885,825 872,945 1450,965" fill="#130b29" />
+
+                    <!-- =================================================================
+                         SCENE 2: "OUR MISSION" CHAMBER & 3-STORY GLASS LAB (y = 900..1800)
+                         ================================================================= -->
+                    <!-- Subterranean Background Wall Linework -->
+                    <line x1="90" y1="950" x2="90" y2="1740" stroke="#ffffff" stroke-opacity="0.05" stroke-width="2" />
+                    <line x1="295" y1="950" x2="295" y2="1740" stroke="#ffffff" stroke-opacity="0.05" stroke-width="2" />
+
+                    <!-- 3-Story Glass Laboratory on Right (x = 880..1330, y = 1105..1690) -->
+                    <g id="scene2-glass-lab">
+                        <rect x="880" y="1105" width="448" height="580" rx="3" fill="url(#labInterior)" stroke="#6353a3" stroke-width="2.5" />
+                        <!-- Glass Curtain Wall Vertical Mullions -->
+                        <line x1="992" y1="1105" x2="992" y2="1685" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.5" />
+                        <line x1="1105" y1="1105" x2="1105" y2="1685" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.5" />
+                        <line x1="1218" y1="1105" x2="1218" y2="1685" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.5" />
+
+                        <!-- Floating Translucent Golden Energy Spheres inside Lab -->
+                        <circle class="floating-orb" cx="1045" cy="1185" r="28" fill="url(#goldenSphere)" />
+                        <circle class="floating-orb" style="animation-delay:-1.4s" cx="1178" cy="1365" r="56" fill="url(#goldenSphere)" />
+                        <circle class="floating-orb" style="animation-delay:-2.8s" cx="1085" cy="1395" r="24" fill="url(#goldenSphere)" />
+                        <circle class="floating-orb" style="animation-delay:-0.8s" cx="1225" cy="1548" r="46" fill="url(#goldenSphere)" />
+                        <circle class="floating-orb" style="animation-delay:-3.2s" cx="1142" cy="1588" r="22" fill="url(#goldenSphere)" />
+
+                        <!-- Floor 3 (Top) + Diagonal Escalator to Floor 2 -->
+                        <rect x="880" y="1290" width="448" height="12" fill="#1b1038" />
+                        <line x1="880" y1="1265" x2="1328" y2="1265" stroke="#9d86d1" stroke-width="1.5" stroke-opacity="0.55" />
+                        <polygon points="1285,1290 1322,1290 935,1480 895,1480" fill="#1a0f36" opacity="0.92" />
+                        <line x1="1285" y1="1267" x2="895" y2="1457" stroke="#ffd27d" stroke-width="2" stroke-opacity="0.75" />
+                        <circle cx="1240" cy="1235" r="28" fill="#ffd275" opacity="0.38" stroke="#ffe49e" stroke-width="1.5" />
+                        <g fill="#160c30">
+                            <circle cx="1205" cy="1221" r="7.5" />
+                            <path d="M1195,1231 L1215,1231 L1213,1263 L1217,1290 L1208,1290 L1205,1263 L1201,1290 L1194,1290 Z" />
+                        </g>
+
+                        <!-- Floor 2 (Middle) + Diagonal Escalator to Floor 1 -->
+                        <rect x="880" y="1480" width="448" height="12" fill="#190e34" />
+                        <line x1="880" y1="1455" x2="1328" y2="1455" stroke="#b594e0" stroke-width="1.5" stroke-opacity="0.55" />
+                        <polygon points="912,1490 952,1490 1308,1670 1268,1670" fill="#180d33" opacity="0.92" />
+                        <line x1="912" y1="1467" x2="1308" y2="1647" stroke="#ffd27d" stroke-width="2" stroke-opacity="0.75" />
+                        <!-- Two Scientists on Floor 2 Left -->
+                        <g fill="#160c30">
+                            <circle cx="962" cy="1415" r="7.5" />
+                            <path d="M952,1425 L972,1425 L970,1455 L973,1480 L965,1480 L962,1455 L958,1480 L951,1480 Z" />
+                            <circle cx="1012" cy="1411" r="8" />
+                            <path d="M1001,1421 L1023,1421 L1020,1453 L1023,1480 L1015,1480 L1012,1453 L1008,1480 L1000,1480 Z" />
+                        </g>
+                        <rect class="holo-screen" x="974" y="1393" width="26" height="18" rx="1.5" fill="#9de8ff" opacity="0.48" stroke="#d4f6ff" stroke-width="1" />
+
+                        <!-- Floor 1 (Bottom of Lab) + Scientist with Raised Arms in front of Dual Hologram -->
+                        <rect x="880" y="1670" width="448" height="16" fill="#180d33" />
+                        <line x1="880" y1="1644" x2="1328" y2="1644" stroke="#d499b8" stroke-width="1.5" stroke-opacity="0.6" />
+                        <g class="holo-screen">
+                            <rect x="975" y="1548" width="98" height="60" rx="2" fill="#a8ecff" fill-opacity="0.35" stroke="#def8ff" stroke-width="1.5" />
+                            <line x1="1024" y1="1548" x2="1024" y2="1608" stroke="#def8ff" stroke-width="1" stroke-opacity="0.65" />
+                            <polyline points="984,1588 1000,1568 1014,1580 1034,1558 1052,1574 1064,1562" fill="none" stroke="#ffffff" stroke-width="1.5" />
+                        </g>
+                        <!-- Scientist Silhouette with Both Arms Raised at Floor 1 -->
+                        <g fill="#150b2e">
+                            <circle cx="1024" cy="1584" r="8.5" />
+                            <path d="M1012,1596 L1036,1596 L1033,1638 L1037,1670 L1027,1670 L1024,1640 L1020,1670 L1011,1670 L1015,1638 Z" />
+                            <path d="M1012,1600 L992,1580 L997,1575 L1015,1594 Z" />
+                            <path d="M1036,1600 L1056,1580 L1051,1575 L1033,1594 Z" />
+                        </g>
+                    </g>
+
+                    <!-- Cantilevered Waterfall Observation Balcony & Silhouette (00:02.0 Detail at right edge of Waterfall) -->
+                    <g id="scene2-waterfall-balcony">
+                        <rect x="688" y="1668" width="192" height="9" fill="#261748" />
+                        <line x1="692" y1="1640" x2="880" y2="1640" stroke="#99b8ff" stroke-width="1.5" stroke-opacity="0.7" />
+                        <line x1="692" y1="1652" x2="880" y2="1652" stroke="#99b8ff" stroke-width="1" stroke-opacity="0.45" />
+                        <line x1="700" y1="1640" x2="700" y2="1668" stroke="#788fd6" stroke-width="1.5" />
+                        <line x1="748" y1="1640" x2="748" y2="1668" stroke="#788fd6" stroke-width="1.5" />
+                        <line x1="798" y1="1640" x2="798" y2="1668" stroke="#788fd6" stroke-width="1.5" />
+                        <line x1="846" y1="1640" x2="846" y2="1668" stroke="#788fd6" stroke-width="1.5" />
+                        <!-- Glowing Cyan Hologram Screen on Waterfall Balcony (Visible in 00:02 & 00:03) -->
+                        <rect class="holo-screen" x="748" y="1592" width="56" height="34" rx="1.5" fill="#9ee8ff" fill-opacity="0.38" stroke="#e0f9ff" stroke-width="1.2" />
+                        <!-- Silhouette standing on waterfall balcony -->
+                        <circle cx="776" cy="1605" r="7.5" fill="#130929" />
+                        <path d="M766,1615 L786,1615 L784,1644 L787,1668 L779,1668 L776,1644 L772,1668 L765,1668 Z" fill="#130929" />
+                    </g>
+
+                    <!-- Scene 2 Floor Slab & Glowing Magenta-Pink Reflection Deck (y = 1735..1845) -->
+                    <polygon points="0,1745 1440,1745 1440,1845 0,1845" fill="#120926" />
+                    <polygon points="150,1738 1340,1738 1410,1785 80,1785" fill="url(#neonFloorPink)" opacity="0.82" />
+                    <ellipse cx="725" cy="1752" rx="185" ry="16" fill="#9ce5ff" opacity="0.45" />
+
+                    <!-- =================================================================
+                         SEAMLESS TRANSITION 2 -> 3: LEFT WATERFALL & GIANT HYDRO TURBINE
+                         (y = 1800..2700)
+                         ================================================================= -->
+                    <!-- Ceiling Spillway Slit on Left of Scene 3 (x = 260..505, y = 1835) -->
+                    <rect x="252" y="1835" width="260" height="10" rx="4" fill="#9ee5ff" opacity="0.9" />
+
+                    <!-- Scene 3 Left Waterfall Vector Curtains (x = 265..495, y = 1842..2640) -->
+                    <g id="waterfall-2-curtains">
+                        <rect x="268" y="1842" width="224" height="798" fill="url(#wfCurtainOuter)" />
+                        <rect class="wf-ribbon-pulse" x="278" y="1842" width="16" height="798" fill="#ffffff" opacity="0.42" />
+                        <rect x="298" y="1842" width="52" height="798" fill="url(#wfCurtainCore)" opacity="0.82" />
+                        <rect x="364" y="1842" width="62" height="798" fill="url(#wfCurtainCore)" opacity="0.9" />
+                        <rect class="wf-ribbon-pulse" style="animation-delay:-1.1s" x="436" y="1842" width="42" height="798" fill="url(#wfCurtainCore)" opacity="0.75" />
+                        <g stroke="#ffffff" stroke-opacity="0.5" stroke-width="1.4">
+                            <line x1="312" y1="1842" x2="312" y2="2635" />
+                            <line x1="348" y1="1842" x2="348" y2="2635" />
+                            <line x1="392" y1="1842" x2="392" y2="2635" stroke-width="2.2" />
+                            <line x1="422" y1="1842" x2="422" y2="2635" />
+                            <line x1="462" y1="1842" x2="462" y2="2635" />
+                        </g>
+                    </g>
+
+                    <!-- Giant Mechanical Hydro-Turbine Wheel Assembly (Centered at cx=368, cy=2285) -->
+                    <g id="scene3-turbine-assembly">
+                        <!-- Outer Fixed Arched Shroud with Rivets -->
+                        <path d="M138,2475 A248,248 0 0,1 598,2475 L562,2475 A212,212 0 0,0 174,2475 Z" fill="url(#turbineMetal)" stroke="#7c6bb5" stroke-width="2" />
+                        <!-- Spinning Inner Bladed Wheel -->
+                        <g class="hydro-wheel-spin">
+                            <circle cx="368" cy="2285" r="192" fill="none" stroke="#48387a" stroke-width="20" />
+                            <circle cx="368" cy="2285" r="176" fill="none" stroke="#8574bd" stroke-width="2.5" stroke-dasharray="18 12" />
+                            <circle cx="368" cy="2285" r="78" fill="none" stroke="#362763" stroke-width="14" />
+                            <g stroke="#3e2e6e" stroke-width="15" stroke-linecap="round">
+                                <line x1="368" y1="2093" x2="368" y2="2477" />
+                                <line x1="176" y1="2285" x2="560" y2="2285" />
+                                <line x1="232" y1="2149" x2="504" y2="2421" />
+                                <line x1="504" y1="2149" x2="232" y2="2421" />
+                            </g>
+                            <g fill="#6958a3">
+                                <rect x="354" y="2076" width="28" height="16" rx="2" />
+                                <rect x="354" y="2468" width="28" height="16" rx="2" />
+                                <rect x="160" y="2271" width="16" height="28" rx="2" />
+                                <rect x="550" y="2271" width="16" height="28" rx="2" />
+                            </g>
+                        </g>
+                        <!-- Heavy Diagonal Structural A-Frame Struts -->
+                        <polygon points="105,2545 348,2268 386,2292 152,2545" fill="url(#turbineMetal)" />
+                        <polygon points="350,2268 588,2485 554,2512 332,2295" fill="#2b1e52" />
+                        <circle cx="368" cy="2285" r="34" fill="#1d123b" stroke="#8574bd" stroke-width="5" />
+                        <circle cx="368" cy="2285" r="12" fill="#9ee5ff" opacity="0.88" />
+
+                        <!-- Left Rock Ledge & Crimson Machinery Base (Matches 00:04.5 & 00:05.5) -->
+                        <polygon points="0,2405 128,2405 178,2488 640,2488 668,2565 0,2565" fill="#1b1038" />
+                        <rect x="82" y="2542" width="565" height="28" fill="url(#turbineCrimsonGlow)" />
+                        <!-- Small Glowing Triangle Warning/Status Badge on Turbine Base (00:04.5) -->
+                        <rect x="348" y="2500" width="38" height="26" rx="3" fill="#2c1954" stroke="#ff5c9e" stroke-width="1.5" />
+                        <polygon points="367,2506 377,2521 357,2521" fill="#ff7ab3" />
+                    </g>
+
+                    <!-- Scene 3 Floor / Scene 4 Ceiling Slab (y = 2635..2745) -->
+                    <rect x="0" y="2635" width="1440" height="105" fill="#110824" />
+                    <rect x="0" y="2630" width="1440" height="10" fill="#26164a" />
+
+                    <!-- =================================================================
+                         SEAMLESS TRANSITION 3 -> 4: RIGHT WATERFALL & 3 ORANGE PLASMA COLUMNS
+                         (y = 2700..3600)
+                         ================================================================= -->
+                    <!-- Industrial Steel Truss Bridge Spanning Top of Scene 4 (y = 2735..2790) -->
+                    <g opacity="0.55">
+                        <rect x="0" y="2735" width="1440" height="48" fill="#190e36" stroke="#473578" stroke-width="1.5" />
+                        <polyline points="0,2783 60,2735 120,2783 180,2735 240,2783 300,2735 360,2783 420,2735 480,2783 540,2735 600,2783 660,2735 720,2783 780,2735 840,2783 900,2735 960,2783 1020,2735 1080,2783 1140,2735 1200,2783 1260,2735 1320,2783 1380,2735 1440,2783" fill="none" stroke="#533e8a" stroke-width="2" />
+                    </g>
+
+                    <!-- Right Waterfall in Scene 4 (x = 975..1210, y = 2740..3535) -->
+                    <g id="waterfall-3-curtains">
+                        <rect x="975" y="2740" width="230" height="795" fill="url(#wfCurtainOuter)" />
+                        <rect class="wf-ribbon-pulse" x="984" y="2740" width="16" height="795" fill="#ffffff" opacity="0.4" />
+                        <rect x="1004" y="2740" width="52" height="795" fill="url(#wfCurtainCore)" opacity="0.76" />
+                        <rect x="1068" y="2740" width="62" height="795" fill="url(#wfCurtainCore)" opacity="0.88" />
+                        <rect class="wf-ribbon-pulse" style="animation-delay:-0.9s" x="1142" y="2740" width="46" height="795" fill="url(#wfCurtainCore)" opacity="0.7" />
+                        <g stroke="#ffffff" stroke-opacity="0.48" stroke-width="1.4">
+                            <line x1="1022" y1="2740" x2="1022" y2="3535" />
+                            <line x1="1055" y1="2740" x2="1055" y2="3535" />
+                            <line x1="1098" y1="2740" x2="1098" y2="3535" stroke-width="2.2" />
+                            <line x1="1132" y1="2740" x2="1132" y2="3535" />
+                            <line x1="1168" y1="2740" x2="1168" y2="3535" />
+                        </g>
+                    </g>
+
+                    <!-- Subtle Lab Wall Brick/Circuit Linework & Arched Doorway Silhouette -->
+                    <g stroke="#3d2c6e" stroke-width="1.5" fill="none" opacity="0.42">
+                        <path d="M515,3535 L515,3210 A92,92 0 0,1 699,3210 L699,3535" fill="#170d33" />
+                        <rect x="465" y="3115" width="42" height="22" />
+                        <rect x="705" y="3255" width="48" height="24" />
+                        <rect x="725" y="3280" width="48" height="24" />
+                    </g>
+
+                    <!-- Scientist Silhouette on Right Balcony Platform (Visible at 00:06.5 transition) -->
+                    <g id="scene4-upper-balcony">
+                        <rect x="855" y="3175" width="255" height="9" fill="#2a1a4f" />
+                        <line x1="855" y1="3148" x2="1110" y2="3148" stroke="#ffae52" stroke-width="1.5" stroke-opacity="0.75" />
+                        <circle class="floating-orb" cx="920" cy="3095" r="46" fill="url(#goldenSphere)" />
+                        <circle class="floating-orb" style="animation-delay:-2s" cx="958" cy="3060" r="26" fill="url(#goldenSphere)" />
+                        <g fill="#160c30">
+                            <circle cx="938" cy="3114" r="7.5" />
+                            <path d="M928,3124 L948,3124 L946,3152 L949,3175 L941,3175 L938,3152 L934,3175 L927,3175 Z" />
+                        </g>
+                    </g>
+
+                    <!-- 3 Glowing Orange-Gold Vertical Plasma Columns on Right (00:07.5 & 00:08.5) -->
+                    <g id="scene4-plasma-columns">
+                        <!-- Column 1 (x = 890) -->
+                        <ellipse cx="904" cy="3410" rx="46" ry="125" fill="#ff6a26" opacity="0.24" />
+                        <rect x="876" y="3302" width="56" height="10" rx="2" fill="#3a2461" stroke="#ff9d42" stroke-width="1.5" />
+                        <rect x="895" y="3312" width="18" height="218" fill="url(#plasmaBeam)" />
+                        <rect x="872" y="3526" width="64" height="12" rx="2" fill="#2a184a" />
+                        <!-- Column 2 (x = 995) -->
+                        <ellipse cx="1009" cy="3410" rx="46" ry="125" fill="#ff6a26" opacity="0.24" />
+                        <rect x="981" y="3302" width="56" height="10" rx="2" fill="#3a2461" stroke="#ff9d42" stroke-width="1.5" />
+                        <rect x="1000" y="3312" width="18" height="218" fill="url(#plasmaBeam)" />
+                        <rect x="977" y="3526" width="64" height="12" rx="2" fill="#2a184a" />
+                        <!-- Column 3 (x = 1100) -->
+                        <ellipse cx="1114" cy="3410" rx="46" ry="125" fill="#ff6a26" opacity="0.24" />
+                        <rect x="1086" y="3302" width="56" height="10" rx="2" fill="#3a2461" stroke="#ff9d42" stroke-width="1.5" />
+                        <rect x="1105" y="3312" width="18" height="218" fill="url(#plasmaBeam)" />
+                        <rect x="1082" y="3526" width="64" height="12" rx="2" fill="#2a184a" />
+                    </g>
+
+                    <!-- Scene 4 Floor Slab (y = 3535..3635 — Visible at top of Scene 5 in frame 00:09.0!) -->
+                    <rect x="0" y="3535" width="1440" height="95" fill="#130b29" />
+                    <ellipse cx="1010" cy="3542" rx="220" ry="14" fill="#ff8c3b" opacity="0.42" />
+                    <rect x="80" y="3535" width="1280" height="6" fill="#4f3984" opacity="0.65" />
+
+                    <!-- =================================================================
+                         SCENE 5: SUNSET CAVERN ARCHWAY FINALE (y = 3600..4500)
+                         Matches frames 00:09.0 and 00:10.0 with stepped architectural arch
+                         and multi-layer scroll-following mountains!
+                         ================================================================= -->
+                    <clipPath id="s5CavernViewportClip">
+                        <rect x="85" y="3620" width="1270" height="880" />
+                    </clipPath>
+
+                    <g clip-path="url(#s5CavernViewportClip)">
+                        <!-- Sunset Sky inside Cavern Opening (Extended height for parallax travel) -->
+                        <rect x="85" y="3620" width="1270" height="700" fill="url(#s5SunsetSky)" />
+
+                        <!-- Layer 5A: Vertical Golden Sun Light Pillar & Glowing Sun Disc (Follows scroll like AETHERIA!) -->
+                        <g id="s5-parallax-sun">
+                            <rect x="385" y="3620" width="166" height="720" fill="#fff0ad" opacity="0.32" />
+                            <rect x="425" y="3620" width="86" height="720" fill="#fff9cf" opacity="0.45" />
+                            <circle cx="468" cy="4238" r="118" fill="#fff5b8" opacity="0.54" />
+                            <circle cx="468" cy="4238" r="72" fill="#ffffff" opacity="0.96" />
+                        </g>
+
+                        <!-- Layer 5B: Creamy Layered Sunset Clouds & 4 Flying Birds (Follows scroll at high depth ratio) -->
+                        <g id="s5-parallax-clouds">
+                            <path d="M510,3982 Q605,3932 695,3968 Q780,3928 875,3965 Q945,3942 1010,3982 Z" fill="#f7be8f" opacity="0.88" />
+                            <path d="M135,4102 Q235,4068 325,4095 Q405,4075 468,4102 Z" fill="#f7c999" opacity="0.72" />
+
+                            <!-- 4 Silhouette Birds Flying Left of the Sun -->
+                            <g stroke="#542e61" stroke-width="2.6" fill="none" stroke-linecap="round">
+                                <path d="M312,4024 Q321,4014 330,4024 Q339,4014 348,4024" />
+                                <path d="M352,4005 Q360,3996 368,4005 Q376,3996 384,4005" />
+                                <path d="M336,4044 Q343,4036 350,4044 Q357,4036 364,4044" />
+                                <path d="M286,4052 Q293,4045 300,4052 Q307,4045 314,4052" />
+                            </g>
+                        </g>
+
+                        <!-- Calm Coastal Ocean Bay (y = 4238..4550) -->
+                        <rect x="85" y="4238" width="1270" height="320" fill="url(#s5Ocean)" />
+
+                        <!-- Golden Sun Shimmer Path on the Water -->
+                        <g fill="#fff6c2" opacity="0.82">
+                            <rect x="415" y="4246" width="106" height="5" rx="2.5" />
+                            <rect x="402" y="4260" width="132" height="5" rx="2.5" />
+                            <rect x="424" y="4275" width="88" height="4" rx="2" />
+                            <rect x="392" y="4290" width="148" height="5" rx="2.5" />
+                            <rect x="430" y="4308" width="76" height="4" rx="2" />
+                            <rect x="412" y="4326" width="110" height="4" rx="2" />
+                        </g>
+
+                        <!-- Layer 5C: Midground Low-Poly Lavender-Purple Mountain Island (Follows scroll smoothly!) -->
+                        <g id="s5-parallax-mid-mountain">
+                            <polygon points="395,4460 462,4315 628,4090 788,4315 885,4460" fill="#9c6cb8" />
+                            <polygon points="628,4090 788,4315 925,4440 865,4275 728,4125" fill="#6b4591" />
+                            <polygon points="415,4460 462,4315 568,4215 655,4315 705,4460" fill="#b88fd1" />
+                            <polygon points="380,4460 420,4315 508,4265 572,4315 610,4460" fill="#d4abe6" />
+                        </g>
+
+                        <!-- Layer 5D: Giant Foreground Low-Poly Magenta-Purple Mountain on Right (Follows scroll with 3D separation!) -->
+                        <g id="s5-parallax-right-mountain">
+                            <polygon points="575,4620 635,4425 895,4095 1038,4425 1095,4620" fill="url(#s5IslandWarm)" />
+                            <polygon points="895,4095 1058,3952 1195,4425 1245,4620 1038,4425" fill="url(#s5IslandWarm)" />
+                            <polygon points="1058,3952 1355,4165 1355,4620 1195,4425" fill="url(#s5IslandCool)" />
+                            <polygon points="695,4620 755,4425 978,4195 1145,4425 1210,4620" fill="#7d3878" opacity="0.88" />
+                            <polygon points="978,4195 1145,4425 1335,4560 1295,4365 1120,4175" fill="#52225c" />
+                        </g>
+
+                        <!-- Layer 5E: Foreground Low-Poly Magenta Rocks on Left Coast (Follows scroll in foreground plane) -->
+                        <g id="s5-parallax-left-rocks">
+                            <polygon points="85,4445 85,4375 225,4308 368,4375 395,4445" fill="#963c80" />
+                            <polygon points="225,4308 312,4332 368,4375 395,4445 275,4445" fill="#cf6399" />
+                            <polygon points="85,4620 85,4490 258,4385 528,4452 615,4620" fill="#78296b" />
+                            <polygon points="258,4385 415,4398 528,4452 572,4540" fill="#c95b96" />
+                        </g>
+                    </g>
+
+                    <!-- Dark Subterranean Architectural Stepped Archway Frame (Matches 00:09 & 00:10) -->
+                    <path d="M0,3600 L1440,3600 L1440,4500 L1328,4500 L1328,4150
+                             L1298,4150 L1298,4075 L1255,4075 L1255,3995 L1185,3995 L1185,3935
+                             Q1050,3845 720,3845
+                             Q390,3845 255,3935
+                             L255,3995 L185,3995 L185,4075 L142,4075 L142,4150 L112,4150
+                             L112,4500 L0,4500 Z"
+                          fill="#150c2e" />
+
+                    <!-- Subtle Geometric Circuit/Brick Linework on the Dark Archway Wall -->
+                    <g stroke="#332259" stroke-width="2" fill="none" opacity="0.78">
+                        <polyline points="42,3680 42,3965 115,3965 115,4125 75,4125 75,4380" />
+                        <rect x="64" y="3735" width="76" height="36" />
+                        <rect x="108" y="3771" width="92" height="34" />
+                        <polyline points="235,3655 235,3835 375,3835" />
+                        <polyline points="1398,3680 1398,3965 1325,3965 1325,4125 1365,4125 1365,4380" />
+                        <rect x="1295" y="3745" width="82" height="38" />
+                        <rect x="1235" y="3783" width="88" height="34" />
+                        <polyline points="1205,3655 1205,3835 1065,3835" />
+                        <!-- Warm inner rim light along the stepped arch edge -->
+                        <path d="M112,4490 L112,4150 L142,4150 L142,4075 L185,4075 L185,3995 L255,3995 L255,3935 Q390,3845 720,3845 Q1050,3845 1185,3935 L1185,3995 L1255,3995 L1255,4075 L1298,4075 L1298,4150 L1328,4150 L1328,4490"
+                              stroke="#f29b7e" stroke-width="2" stroke-opacity="0.45" />
+                    </g>
+                </svg>
+
+                <!-- 4. REAL-TIME HTML5 CANVAS FLUID & MIST OVERLAY (z-25)
+                     Renders animated stepped water streaks, splash mist plumes, and plasma/sun particles -->
+                <canvas id="world-fx-canvas" class="absolute inset-0 w-full h-full z-25 pointer-events-none"></canvas>
+
+                <!-- 5. DIFFERENTIAL FOREGROUND PARALLAX CHARACTERS & CONSOLES (z-30)
+                     These layers move at slightly higher parallax multipliers to match 00:02, 00:04.5, and 00:07.5 -->
+                <svg class="absolute inset-0 w-full h-full z-30 pointer-events-none" viewBox="0 0 1440 4500" preserveAspectRatio="none">
+                    <!-- Scene 2 Foreground Scientist + Purple Hologram UI on Bottom Left (00:02.0) -->
+                    <g id="fg-scene2-scientist">
+                        <g class="holo-screen">
+                            <polygon points="185,1510 388,1510 388,1655 185,1655" fill="#7c4dff" fill-opacity="0.22" stroke="#b388ff" stroke-width="2" />
+                            <rect x="200" y="1526" width="76" height="46" fill="#b388ff" fill-opacity="0.28" stroke="#d1c4e9" stroke-width="1" />
+                            <rect x="290" y="1526" width="82" height="22" fill="#90caf9" fill-opacity="0.28" />
+                            <rect x="290" y="1558" width="82" height="32" fill="#ce93d8" fill-opacity="0.25" />
+                            <line x1="200" y1="1592" x2="275" y2="1592" stroke="#e1bee7" stroke-width="2" />
+                            <line x1="200" y1="1608" x2="262" y2="1608" stroke="#e1bee7" stroke-width="2" />
+                            <circle cx="332" cy="1622" r="16" stroke="#b388ff" stroke-width="1.5" fill="none" />
+                        </g>
+                        <!-- Detailed Foreground Scientist Looking at Hologram -->
+                        <ellipse cx="192" cy="1532" rx="18" ry="21" fill="#2c194d" />
+                        <path d="M152,1572 C152,1556 226,1556 232,1575 L248,1765 L142,1765 Z" fill="#6a3b7d" />
+                        <path d="M188,1572 L232,1575 L248,1765 L194,1765 Z" fill="#9c5596" opacity="0.78" />
+                        <path d="M218,1595 L278,1578 L284,1594 L224,1622 Z" fill="#82468a" />
+                        <rect x="195" y="1682" width="125" height="95" fill="#1b0f36" stroke="#4a3275" stroke-width="1.5" />
+                    </g>
+
+                    <!-- Scene 3 Foreground Dual Hologram Console & Two Operators on Bottom Right (00:04.5 & 00:05.5) -->
+                    <g id="fg-scene3-operators">
+                        <!-- Right Elevated Platform & Railing -->
+                        <rect x="815" y="2535" width="625" height="105" fill="#180d34" />
+                        <rect x="815" y="2532" width="625" height="6" fill="#8558a8" opacity="0.7" />
+                        <line x1="825" y1="2465" x2="1440" y2="2465" stroke="#7965b8" stroke-width="2" stroke-opacity="0.7" />
+                        <line x1="825" y1="2495" x2="1440" y2="2495" stroke="#7965b8" stroke-width="1.2" stroke-opacity="0.45" />
+                        <line x1="835" y1="2465" x2="835" y2="2535" stroke="#7965b8" stroke-width="2" />
+                        <line x1="965" y1="2465" x2="965" y2="2535" stroke="#7965b8" stroke-width="2" />
+                        <line x1="1125" y1="2465" x2="1125" y2="2535" stroke="#7965b8" stroke-width="2" />
+                        <line x1="1285" y1="2465" x2="1285" y2="2535" stroke="#7965b8" stroke-width="2" />
+
+                        <!-- Left Angled Cyan Hologram Screen + Operator 1 -->
+                        <g class="holo-screen">
+                            <polygon points="885,2375 1032,2375 1012,2448 865,2448" fill="#7ce7ff" fill-opacity="0.28" stroke="#b8f3ff" stroke-width="1.5" />
+                            <line x1="888" y1="2394" x2="1012" y2="2394" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.8" />
+                            <rect x="886" y="2406" width="44" height="26" fill="#ffffff" fill-opacity="0.25" />
+                            <polyline points="942,2432 958,2410 974,2422 994,2402" fill="none" stroke="#ffffff" stroke-width="1.5" />
+                        </g>
+                        <circle cx="952" cy="2405" r="12" fill="#170d33" />
+                        <path d="M932,2422 L972,2422 L978,2482 L974,2535 L955,2535 L952,2488 L946,2535 L930,2535 L926,2482 Z" fill="#170d33" />
+                        <path d="M932,2426 L904,2442 L910,2450 L936,2436 Z" fill="#2a1852" />
+                        <path d="M972,2426 L1000,2442 L994,2450 L968,2436 Z" fill="#2a1852" />
+
+                        <!-- Right Angled Cyan Hologram Screen + Operator 2 -->
+                        <g class="holo-screen" style="animation-delay:-1.5s">
+                            <polygon points="1095,2375 1242,2375 1222,2448 1075,2448" fill="#7ce7ff" fill-opacity="0.28" stroke="#b8f3ff" stroke-width="1.5" />
+                            <circle cx="1132" cy="2412" r="16" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-opacity="0.8" />
+                            <line x1="1162" y1="2396" x2="1218" y2="2396" stroke="#ffffff" stroke-width="1.5" />
+                            <line x1="1162" y1="2412" x2="1208" y2="2412" stroke="#ffffff" stroke-width="1.5" />
+                            <line x1="1162" y1="2428" x2="1214" y2="2428" stroke="#ffffff" stroke-width="1.5" />
+                        </g>
+                        <circle cx="1162" cy="2405" r="12" fill="#170d33" />
+                        <path d="M1142,2422 L1182,2422 L1188,2482 L1184,2535 L1165,2535 L1162,2488 L1156,2535 L1140,2535 L1136,2482 Z" fill="#170d33" />
+                        <path d="M1142,2426 L1114,2442 L1120,2450 L1146,2436 Z" fill="#2a1852" />
+                        <path d="M1182,2426 L1210,2442 L1204,2450 L1178,2436 Z" fill="#2a1852" />
+                    </g>
+
+                    <!-- Scene 4 Pedestal with Cluster of Golden Energy Orbs (Rises at 00:07.0) -->
+                    <g id="fg-scene4-orbs">
+                        <ellipse cx="272" cy="3420" rx="145" ry="95" fill="#ff9436" opacity="0.18" />
+                        <circle class="floating-orb" cx="212" cy="3412" r="56" fill="url(#goldenSphere)" stroke="#ffe599" stroke-width="1" stroke-opacity="0.55" />
+                        <circle class="floating-orb" style="animation-delay:-1.3s" cx="276" cy="3402" r="62" fill="url(#goldenSphere)" stroke="#ffe599" stroke-width="1" stroke-opacity="0.55" />
+                        <circle class="floating-orb" style="animation-delay:-2.5s" cx="348" cy="3424" r="46" fill="url(#goldenSphere)" stroke="#ffe599" stroke-width="1" stroke-opacity="0.55" />
+                        <circle class="floating-orb" style="animation-delay:-0.7s" cx="242" cy="3452" r="32" fill="url(#goldenSphere)" />
+                        <circle class="floating-orb" style="animation-delay:-3.1s" cx="314" cy="3458" r="28" fill="url(#goldenSphere)" />
+                        <!-- Pedestal Table -->
+                        <rect x="168" y="3482" width="215" height="12" rx="3" fill="#ffae52" opacity="0.88" />
+                        <polygon points="182,3494 368,3494 388,3545 162,3545" fill="#26164a" stroke="#61469c" stroke-width="1.5" />
+                    </g>
+
+                    <!-- Scene 4 Closest Foreground Scientist on Far Bottom-Left (Rises last at 00:07.5 & drops first at 00:08.5!) -->
+                    <g id="fg-scene4-scientist">
+                        <circle cx="114" cy="3362" r="14" fill="#211240" />
+                        <path d="M88,3382 L138,3382 L146,3468 L142,3555 L118,3555 L114,3478 L106,3555 L84,3555 Z" fill="#29174f" />
+                        <!-- Raised Right Arm Gesturing Toward Golden Orbs -->
+                        <path d="M134,3392 L176,3366 L182,3378 L140,3412 Z" fill="#462878" />
+                    </g>
+                </svg>
+
+                <!-- =================================================================
+                     6. REIMAGINED CREATIVE UI CARDS & INTERACTIVE BUTTON OVERLAYS (z-40)
+                     Every single button has custom animations and real interactive actions!
+                     ================================================================= -->
+
+                <!-- SCENE 1 INTERACTIVE HUD CONTROLS (Surface Horizon, y = 0%..20%) -->
+                <div id="text-scene-1" class="absolute left-0 right-0 top-[13.2%] sm:top-[13.6%] z-40 flex flex-col items-center pointer-events-none px-4">
+                    <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3.5 world-interactive">
+                        <button onclick="jumpToScene(1); triggerToast('Descending into Hydro-Molecular Lab (-320m)...');" class="btn-animated-glow flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-xl border border-white/40 text-white text-[10.5px] sm:text-xs font-semibold tracking-wider shadow-xl">
+                            <span>Descend Into Core</span>
+                            <svg class="w-3.5 h-3.5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                            </svg>
+                        </button>
+                        <button id="btn-mountain-relay" onclick="pulseMountainRelay()" class="btn-animated-glow flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/35 backdrop-blur-xl border border-amber-200/50 text-amber-100 text-[10.5px] sm:text-xs font-medium tracking-wide shadow-xl">
+                            <span>⚡ Pulse Solar-Mountain Relay</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SCENE 2 CREATIVE TELEMETRY CARD: "Subsurface Fluid Dynamics" (y = 20%..40%) -->
+                <div id="text-scene-2" class="absolute left-0 right-0 top-[20%] h-[20%] z-40 flex items-center justify-center md:justify-start px-4 sm:px-10 lg:px-16 pointer-events-none">
+                    <div class="w-full max-w-[450px] sm:max-w-[465px] cyber-glass-card p-4 sm:p-7 world-interactive -mt-8 sm:-mt-16">
+                        <!-- Top Telemetry Header Pill -->
+                        <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-cyan-400/15 border border-cyan-300/35 text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-cyan-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                                LEVEL 02 // -320M DEPTH
+                            </span>
+                            <span id="lab-tracer-badge" class="text-[9px] sm:text-[10px] font-mono text-purple-200/80 bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
+                                TRACER: STANDBY
+                            </span>
+                        </div>
+
+                        <h2 class="section-heading text-xl sm:text-3xl lg:text-[38px] text-white mb-2 sm:mb-3">
+                            Subsurface Fluid Dynamics
+                        </h2>
+
+                        <p class="body-c opy text-[11.5px] sm:text-[13px] mb-3">
+                            Where the surface river plunges into our subterranean sanctuary, Aetheria's 3-story <strong class="text-cyan-200 font-medium">Hydro-Molecular Lab</strong> purifies and ionizes every liter before kinetic harvesting.
+                        </p>
+
+                        <!-- Live Telemetry Metrics Grid -->
+                        <div class="grid grid-cols-2 gap-2 sm:gap-2.5 mb-4 sm:mb-5 p-2.5 rounded-xl bg-black/25 border border-white/10">
+                            <div>
+                                <div class="text-[9px] sm:text-[10px] font-mono uppercase text-cyan-300/80">Cascade Flow Rate</div>
+                                <div id="metric-flow-rate" class="text-sm sm:text-lg font-bold font-['Space_Grotesk'] text-white transition-all">42,800 L/s</div>
+                            </div>
+                            <div>
+                                <div class="text-[9px] sm:text-[10px] font-mono uppercase text-amber-300/80">Ionization Purity</div>
+                                <div id="metric-purity" class="text-sm sm:text-lg font-bold font-['Space_Grotesk'] text-amber-200 transition-all">99.94%</div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Animated Buttons -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-tracer" onclick="toggleMolecularTracer()" class="btn-animated-glow flex-1 sm:flex-initial px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-bold text-[11px] sm:text-xs tracking-wide shadow-lg">
+                                🧪 Inject Molecular Tracer
+                            </button>
+                            <button onclick="openSpecsModal('lab')" class="btn-animated-glow px-3.5 sm:px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white text-[11px] sm:text-xs font-medium">
+                                📄 Read Lab Whitepaper
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCENE 3 CREATIVE TELEMETRY CARD: "Kinetic Harvesting at Scale" (y = 40%..60%) -->
+                <div id="text-scene-3" class="absolute left-0 right-0 top-[40%] h-[20%] z-40 flex items-center justify-center md:justify-end px-4 sm:px-10 lg:px-16 pointer-events-none">
+                    <div class="w-full max-w-[460px] sm:max-w-[500px] cyber-glass-card p-4 sm:p-7 world-interactive -mt-10 sm:-mt-20">
+                        <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-fuchsia-400/15 border border-fuchsia-300/35 text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-fuchsia-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-fuchsia-400 animate-ping"></span>
+                                LEVEL 03 // -780M KINETIC CORE
+                            </span>
+                            <span id="turbine-mode-badge" class="text-[9px] sm:text-[10px] font-mono text-emerald-300 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-400/30">
+                                NOMINAL 24 RPM
+                            </span>
+                        </div>
+
+                        <h2 class="section-heading text-xl sm:text-3xl lg:text-[38px] text-white mb-3 sm:mb-4">
+                            Kinetic Harvesting at Scale
+                        </h2>
+
+                        <div class="space-y-2.5 sm:space-y-3 mb-4">
+                            <div class="p-2.5 sm:p-3 rounded-xl bg-white/[0.04] border border-white/10">
+                                <h3 class="sub-heading text-xs sm:text-sm text-cyan-200 mb-1 flex items-center justify-between">
+                                    <span>Zero-Friction Magnetic Bearings</span>
+                                    <span id="metric-megawatts" class="font-mono text-white font-bold">840 MW</span>
+                                </h3>
+                                <p class="body-copy text-[11px] sm:text-xs">
+                                    Gravity-fed subterranean cascades drive our 18-meter titanium hydro-turbine 24/7, completely immune to surface weather fluctuations.
+                                </p>
+                            </div>
+                            <div class="p-2.5 sm:p-3 rounded-xl bg-white/[0.04] border border-white/10 hidden sm:block">
+                                <h3 class="sub-heading text-xs sm:text-sm text-fuchsia-200 mb-1">
+                                    Dual-Holo Autonomous Telemetry
+                                </h3>
+                                <p class="body-copy text-[11px] sm:text-xs">
+                                    Real-time predictive load balancing routes clean megawatts directly to metropolitan microgrids with sub-millisecond latency.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-turbine-overdrive" onclick="toggleTurbineOverdrive()" class="btn-animated-glow flex-1 sm:flex-initial px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500 text-white font-bold text-[11px] sm:text-xs tracking-wide shadow-lg">
+                                🌀 Boost Turbine Overdrive (2.5x)
+                            </button>
+                            <button onclick="openSpecsModal('turbine')" class="btn-animated-glow px-3.5 sm:px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white text-[11px] sm:text-xs font-medium">
+                                📊 Inspect Torque Specs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCENE 4 CREATIVE TELEMETRY CARD: "Deep Geothermal Plasma Core" (y = 60%..80%) -->
+                <div id="text-scene-4" class="absolute left-0 right-0 top-[60%] h-[20%] z-40 flex items-center justify-center md:justify-start px-4 sm:px-10 lg:px-16 pointer-events-none">
+                    <div class="w-full max-w-[460px] sm:max-w-[505px] cyber-glass-card p-4 sm:p-7 world-interactive -mt-12 sm:-mt-26">
+                        <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-amber-400/15 border border-amber-300/35 text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-amber-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+                                LEVEL 04 // -1,450M THERMAL CORE
+                            </span>
+                            <span id="plasma-temp-badge" class="text-[9px] sm:text-[10px] font-mono text-amber-300 bg-amber-500/15 px-2.5 py-1 rounded-full border border-amber-400/30">
+                                CORE: 4,200 K
+                            </span>
+                        </div>
+
+                        <h2 class="section-heading text-xl sm:text-3xl lg:text-[36px] text-white mb-2.5 sm:mb-3.5">
+                            Geothermal Plasma Synthesis
+                        </h2>
+
+                        <div class="space-y-2.5 sm:space-y-3 mb-4 sm:mb-5">
+                            <div>
+                                <h3 class="sub-heading text-xs sm:text-sm text-amber-200 mb-1">
+                                    Triple-Column Thermal Conduits.
+                                </h3>
+                                <p class="body-copy text-[11px] sm:text-xs">
+                                    At 1.45 kilometers beneath the city, superheated mantle vapor meets cold subterranean hydro-streams inside three magnetic containment columns, generating baseload terawatt energy.
+                                </p>
+                            </div>
+                            <div class="hidden sm:block">
+                                <h3 class="sub-heading text-xs sm:text-sm text-cyan-200 mb-1">
+                                    Closed-Loop Spherical Storage.
+                                </h3>
+                                <p class="body-copy text-[11px] sm:text-xs">
+                                    Surplus thermal energy is encapsulated within high-density quantum-gold plasma spheres for zero-loss seasonal grid storage.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-plasma-surge" onclick="triggerPlasmaSurge()" class="btn-animated-glow flex-1 sm:flex-initial px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 text-slate-950 font-bold text-[11px] sm:text-xs tracking-wide shadow-lg">
+                                🔥 Ignite Plasma Core Surge
+                            </button>
+                            <button onclick="openSpecsModal('plasma')" class="btn-animated-glow px-3.5 sm:px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white text-[11px] sm:text-xs font-medium">
+                                🛡️ Containment Telemetry
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCENE 5 NEW CREATIVE FINALE CARD: "A Restored Biosphere" (y = 80%..100%) -->
+                <div id="text-scene-5" class="absolute left-0 right-0 top-[80%] h-[20%] z-40 flex items-end justify-center pb-14 sm:pb-16 px-4 pointer-events-none">
+                    <div class="w-full max-w-[700px] cyber-glass-card px-4 py-3.5 sm:px-7 sm:py-5 world-interactive flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+                        <div class="text-center sm:text-left">
+                            <div class="inline-flex items-center gap-1.5 text-[9.5px] sm:text-[10px] font-mono uppercase tracking-widest text-amber-200 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                                05 // RESTORED BIOSPHERE HORIZON
+                            </div>
+                            <h2 class="font-['Space_Grotesk'] font-bold text-base sm:text-xl text-white">
+                                Clean Energy Inside. Untouched Nature Outside.
+                            </h2>
+                            <p id="biosphere-status-text" class="text-[10.5px] sm:text-xs text-purple-100/80 mt-0.5">
+                                1.4 Million homes powered • 0g Carbon Emissions • 100% Coastal Water Returned Pure
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-center gap-2 shrink-0">
+                            <button id="btn-horizon-pulse" onclick="triggerHorizonAurora()" class="btn-animated-glow px-3.5 sm:px-4 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/35 border border-amber-200/50 text-amber-100 text-[11px] sm:text-xs font-semibold">
+                                🌅 Pulse Solar Horizon
+                            </button>
+                            <button onclick="jumpToScene(0); triggerToast('Whip-Scrolling to Surface City (0m)...');" class="btn-animated-glow px-3.5 sm:px-4 py-2 rounded-full bg-white text-slate-950 font-bold text-[11px] sm:text-xs shadow-lg">
+                                ↑ Ascend to Surface
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /#continuous-world -->
+
+        </div><!-- /#camera-viewport -->
+
+    </div><!-- /#stage-wrapper -->
+
+    <!-- INTERACTIVE SYSTEM SPECS & LIVE TELEMETRY MODAL -->
+    <div id="specs-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-md p-4">
+        <div class="relative w-full max-w-lg cyber-glass-card p-6 sm:p-8 text-white">
+            <button onclick="closeSpecsModal()" class="btn-animated-glow absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 text-white">
+                ✕
+            </button>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                <span class="text-[10px] font-mono uppercase tracking-[0.25em] text-cyan-300">AETHERIA LIVE TELEMETRY MATRIX</span>
+            </div>
+            <h3 id="specs-modal-title" class="text-xl sm:text-2xl font-bold font-['Space_Grotesk'] mb-2">
+                Subsurface CleanTech Architecture
+            </h3>
+            <p id="specs-modal-desc" class="text-xs text-purple-100/80 mb-5 leading-relaxed">
+                Real-time diagnostic readout across all 5 vertical subterranean strata, from the surface mountain relay down to the coastal biosphere outfall.
+            </p>
+
+            <!-- Interactive Layer Selector Tabs inside Modal -->
+            <div class="flex flex-wrap gap-1.5 mb-4">
+                <button onclick="switchSpecsTab('lab')" class="btn-animated-glow px-3 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-300/40 text-[11px] font-medium text-cyan-100">02. Hydro Lab</button>
+                <button onclick="switchSpecsTab('turbine')" class="btn-animated-glow px-3 py-1.5 rounded-full bg-fuchsia-500/20 border border-fuchsia-300/40 text-[11px] font-medium text-fuchsia-100">03. Kinetic Turbine</button>
+                <button onclick="switchSpecsTab('plasma')" class="btn-animated-glow px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-300/40 text-[11px] font-medium text-amber-100">04. Geo-Plasma Core</button>
+            </div>
+
+            <div class="space-y-3 bg-black/30 p-4 rounded-2xl border border-white/10 text-xs mb-5">
+                <div class="flex justify-between items-center">
+                    <span class="text-white/70">Active Subterranean Stratum</span>
+                    <span id="spec-stratum" class="font-mono font-semibold text-cyan-300">Level 02 — Hydro-Molecular Lab</span>
+                </div>
+                <div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                    <div id="spec-bar-1" class="bg-gradient-to-r from-cyan-400 to-fuchsia-400 h-full w-[94%] transition-all duration-500"></div>
+                </div>
+                <div class="flex justify-between items-center pt-1">
+                    <span class="text-white/70">Net Clean Grid Output</span>
+                    <span id="spec-output" class="font-mono font-semibold text-amber-300">2.48 Gigawatts (GW)</span>
+                </div>
+                <div class="flex justify-between items-center pt-1">
+                    <span class="text-white/70">Ecological Outfall Purity</span>
+                    <span class="font-mono font-semibold text-emerald-300">99.98% Restored Marine Grade</span>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2.5">
+                <button onclick="closeSpecsModal()" class="btn-animated-glow px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium">Close</button>
+                <button onclick="closeSpecsModal(); openModal('Schedule Technical Deep-Dive');" class="btn-animated-glow px-5 py-2 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 font-bold text-xs">Request Full Blueprint</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTERACTIVE SYNC PORTAL / CONTACT MODAL -->
+    <div id="segesta-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-md p-4">
+        <div class="relative w-full max-w-md cyber-glass-card p-6 sm:p-8 shadow-2xl text-white">
+            <button onclick="closeModal()" class="btn-animated-glow absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white">
+                ✕
+            </button>
+            <div class="flex items-center gap-2.5 mb-2">
+                <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 22" fill="currentColor">
+                    <polygon points="12,1 23,21 1,21" />
+                </svg>
+                <span class="text-[11px] uppercase tracking-[0.25em] text-cyan-300 font-semibold">Aetheria Grid Portal</span>
+            </div>
+            <h3 id="modal-title" class="text-2xl font-bold mb-2 font-['Space_Grotesk']">Connect With Aetheria Grid</h3>
+            <p class="text-xs text-purple-200/80 mb-5 leading-relaxed">
+                Partner with our subsurface engineering team to deploy zero-emission hydro-thermal microgrids for your municipality or data center infrastructure.
+            </p>
+            <form onsubmit="submitModalForm(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block text-purple-200/90 mb-1">Lead Engineer / Organization</label>
+                    <input type="text" required placeholder="Dr. Elena Vance — TerraGrid Corp" class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400" />
+                </div>
+                <div>
+                    <label class="block text-purple-200/90 mb-1">Work Email</label>
+                    <input type="email" required placeholder="elena@terragrid.io" class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400" />
+                </div>
+                <div>
+                    <label class="block text-purple-200/90 mb-1">Target Megawatt Capacity & Region</label>
+                    <textarea rows="3" required placeholder="Tell us about your clean baseload energy requirements..." class="w-full px-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400"></textarea>
+                </div>
+                <button type="submit" class="btn-animated-glow w-full py-3 rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-fuchsia-500 text-white font-bold tracking-wider uppercase shadow-lg">
+                    Transmit Grid Request
+                </button>
+            </form>
+            <div id="modal-success" class="hidden mt-4 p-3 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 text-xs text-center">
+                Transmission confirmed! Our Subsurface Grid Architects will synchronize with your team within 24 hours.
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         WATERFALL FLUID ENGINE, OVAL NAVBAR MORPHING & INTERACTIVE CONTROLS
+         ========================================================================= -->
+        <script src="script.js"></script>
+</body>
+</html>
